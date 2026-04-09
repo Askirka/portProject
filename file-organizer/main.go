@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -24,6 +25,19 @@ func main() {
 
 	for key, value := range DefaultRules {
 		fmt.Printf("%s: %s\n", strings.ToLower(key), strings.ToLower(value))
+	}
+
+	type FileOrganizer struct {
+		sourceDir      string
+		rulesMap       map[string]string
+		processedFiles int
+		logFile        *os.File
+	}
+
+
+	func NewFileOrganizer(sourceDir string) (*FileOrganizer, error){
+
+
 	}
 
 }
