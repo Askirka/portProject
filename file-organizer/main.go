@@ -11,6 +11,15 @@ func main() {
 		".jpeg": "Images",
 		".pdf":  "Documents",
 		".mp3":  "Music",
+		".zip":  "Archives",
+		".rar":  "Archives",
+		".mp4":  "Video",
+		".avi":  "Video",
+		".wav":  "Music",
+		".doc":  "Documents",
+		".docx": "Documents",
+		".txt":  "Documents",
+		".png":  "Images",
 	}
 
 	for key, value := range DefaultRules {
