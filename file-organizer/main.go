@@ -28,20 +28,28 @@ func main() {
 		fmt.Printf("%s: %s\n", strings.ToLower(key), strings.ToLower(value))
 	}
 
-	type FileOrganizer struct {
-		sourceDir      string
-		rulesMap       map[string]string
-		processedFiles int
-		logFile        *os.File
-	}
+}
 
+type FileOrganizer struct {
+	sourceDir      string
+	rulesMap       map[string]string
+	processedFiles int
+	logFile        *os.File
 }
 
 func NewFileOrganizer(sourceDir string) (*FileOrganizer, error) {
 	if sourceDir == "" {
-		fmt.Println("Empty directory")
+		return nil, errors.New("Empty directory")
 
 	}
-	return nil, errors.New("Empty directory")
+	info, err := os.Stat(sourceDir)
+	if err != nil {
+		return nil, err
+	}
+	if !info.IsDir() {
+		return nil, errors.New("Source is not a directory")
+	}
+
+	return &FileOrganizer{sourceDir: sourceDir}, nil
 
 }
