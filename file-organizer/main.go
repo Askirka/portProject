@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -34,10 +35,13 @@ func main() {
 		logFile        *os.File
 	}
 
+}
 
-	func NewFileOrganizer(sourceDir string) (*FileOrganizer, error){
-
+func NewFileOrganizer(sourceDir string) (*FileOrganizer, error) {
+	if sourceDir == "" {
+		fmt.Println("Empty directory")
 
 	}
+	return nil, errors.New("Empty directory")
 
 }
