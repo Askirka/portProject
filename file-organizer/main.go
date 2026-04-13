@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 )
@@ -51,5 +52,36 @@ func NewFileOrganizer(sourceDir string) (*FileOrganizer, error) {
 	}
 
 	return &FileOrganizer{sourceDir: sourceDir}, nil
+
+}
+
+func (fo *FileOrganizer) initLog() error {
+	file, err := os.OpenFile("oranizer.log", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		return err
+	}
+	fo.logFile = file
+
+	log.SetOutput(file)
+	return nil
+
+}
+
+func (fo *FileOrganizer) logSuccess(message string) {
+	log.Println("[SUCCESS]", message)
+
+}
+
+func (fo *FileOrganizer) logError(message string) {
+	log.Println("[ERROR]", message)
+
+}
+
+func (fo *FileOrganizer) Close() error {
+	if fo.logFile != nil {
+		return fo.logFile.Close()
+
+	}
+	return nil
 
 }
