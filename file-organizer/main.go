@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -83,5 +84,13 @@ func (fo *FileOrganizer) Close() error {
 
 	}
 	return nil
+
+}
+
+func (fo *FileOrganizer) moveFile(sourcePath, targetDir string) error {
+	fullPath := filepath.Join(sourcePath, targetDir)
+	if fullPath == "" {
+		return errors.New("Empty directory")
+	}
 
 }
