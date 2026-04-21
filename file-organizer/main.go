@@ -88,9 +88,12 @@ func (fo *FileOrganizer) Close() error {
 }
 
 func (fo *FileOrganizer) moveFile(sourcePath, targetDir string) error {
-	fullPath := filepath.Join(sourcePath, targetDir)
-	if fullPath == "" {
-		return errors.New("Empty directory")
+	fullPath := filepath.Join(fo.sourceDir, targetDir)
+	CreateDirectory := os.MkdirAll(fullPath, 0755)
+	if CreateDirectory != nil {
+		return CreateDirectory
 	}
+
+	return nil
 
 }
