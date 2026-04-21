@@ -95,3 +95,5 @@ func (fo *FileOrganizer) moveFile(sourcePath, targetDir string) error {
 	}
 
 }
+
+// TODO
