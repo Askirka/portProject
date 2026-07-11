@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 func main() {
@@ -88,10 +89,27 @@ func (fo *FileOrganizer) Close() error {
 }
 
 func (fo *FileOrganizer) moveFile(sourcePath, targetDir string) error {
-	fullPath := filepath.Join(fo.sourceDir, targetDir)
-	CreateDirectory := os.MkdirAll(fullPath, 0755)
+	fileName := filepath.Base(sourcePath)
+	destinationDir := filepath.Join(fo.sourceDir, targetDir)
+	destinationPath := filepath.Join(destinationDir, fileName)
+
+	_, err := os.Stat(destinationPath)
+	if err == nil {
+		fileExt := filepath.Ext(fileName)
+		fileNameWithoutExt := strings.TrimSuffix(fileName, fileExt)
+		timestamp := time.Now().Format("2006-01-02_15-04-05")
+		newFileName := fmt.Sprintf("%s_%s%s", fileNameWithoutExt, timestamp, fileExt)
+		destinationPath = filepath.Join(destinationDir, newFileName)
+	}
+
+	CreateDirectory := os.MkdirAll(destinationDir, 0755)
 	if CreateDirectory != nil {
 		return CreateDirectory
+	}
+	err = os.Rename(sourcePath, destinationPath)
+	if err != nil {
+
+		return err
 	}
 
 	return nil
