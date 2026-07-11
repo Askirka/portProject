@@ -39,6 +39,13 @@ type FileOrganizer struct {
 	rulesMap       map[string]string
 	processedFiles int
 	logFile        *os.File
+	statistics     map[string]*FileStats
+	totalSize      int64
+}
+
+type FileStats struct {
+	Count     int
+	TotalSize int64
 }
 
 func NewFileOrganizer(sourceDir string) (*FileOrganizer, error) {
@@ -54,7 +61,7 @@ func NewFileOrganizer(sourceDir string) (*FileOrganizer, error) {
 		return nil, errors.New("Source is not a directory")
 	}
 
-	return &FileOrganizer{sourceDir: sourceDir}, nil
+	return &FileOrganizer{sourceDir: sourceDir, statistics: make(map[string]*FileStats)}, nil
 
 }
 
@@ -94,7 +101,29 @@ func (fo *FileOrganizer) moveFile(sourcePath, targetDir string) error {
 	destinationDir := filepath.Join(fo.sourceDir, targetDir)
 	destinationPath := filepath.Join(destinationDir, fileName)
 
-	_, err := os.Stat(destinationPath)
+	info, err := os.Stat(sourcePath)
+	if err != nil {
+		return err
+	}
+	fileSize := info.Size()
+
+	fo.totalSize += fileSize
+
+	stats, ok := fo.statistics[targetDir]
+
+	if ok {
+
+		stats.Count++
+		stats.TotalSize += fileSize
+	} else {
+
+		fo.statistics[targetDir] = &FileStats{
+			Count:     1,
+			TotalSize: fileSize,
+		}
+	}
+
+	_, err = os.Stat(destinationPath)
 	if err == nil {
 		fileExt := filepath.Ext(fileName)
 		fileNameWithoutExt := strings.TrimSuffix(fileName, fileExt)
@@ -161,4 +190,13 @@ func (fo *FileOrganizer) Organize() error {
 	}
 
 	return nil
+}
+
+func (fo *FileOrganizer) generateReport() string {
+
+}
+
+func (fs *FileStats) String() string {
+	SizeInfo := fmt.Sprintf("Файлов:%d,размер :%.2f KB", fs.Count, float64(fs.TotalSize)/1024)
+	return SizeInfo
 }
