@@ -146,7 +146,7 @@ func (fo *FileOrganizer) Organize() error {
 
 		value, ok := fo.rulesMap[ext]
 		if ok {
-			err = fo.moveFile(value, path)
+			err = fo.moveFile(path, value)
 			if err != nil {
 				return err
 			}
