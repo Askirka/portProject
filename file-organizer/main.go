@@ -104,13 +104,17 @@ func (fo *FileOrganizer) moveFile(sourcePath, targetDir string) error {
 
 	CreateDirectory := os.MkdirAll(destinationDir, 0755)
 	if CreateDirectory != nil {
+		fo.logError("не удалось создать директорию +destinationDir, CreateDirectory")
 		return CreateDirectory
 	}
 	err = os.Rename(sourcePath, destinationPath)
 	if err != nil {
+		fo.logError("не удалось переместить файл +fileName, err")
 
 		return err
 	}
+
+	fo.logSuccess("\"Перемещён: \" + sourcePath + \" -> \" + destinationPath")
 
 	return nil
 
