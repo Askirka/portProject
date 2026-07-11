@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
 	"io/fs"
@@ -44,9 +45,32 @@ type FileStats struct {
 }
 
 func main() {
-	organizer, err := NewFileOrganizer("./files")
+	fmt.Println("=== Файловый органайзер ===")
+
+	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Print("Введите путь к директории для организации (Enter для текущей директории): ")
+
+	input, err := reader.ReadString('\n')
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Ошибка чтения пути:", err)
+		return
+	}
+
+	sourcePath := strings.TrimSpace(input)
+
+	if sourcePath == "" {
+		sourcePath, err = os.Getwd()
+		if err != nil {
+			fmt.Println("Ошибка получения текущей директории:", err)
+			return
+		}
+	}
+
+	organizer, err := NewFileOrganizer(sourcePath)
+	if err != nil {
+		fmt.Println("Ошибка:", err)
+		return
 	}
 
 	defer func() {
@@ -56,12 +80,18 @@ func main() {
 		}
 	}()
 
+	fmt.Println("Начинаем организацию файлов...")
+	fmt.Println()
+
 	err = organizer.Organize()
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Ошибка организации файлов:", err)
+		return
 	}
 
 	fmt.Println(organizer.generateReport())
+
+	fmt.Println("Организация завершена! Подробности в файле organizer.log")
 }
 
 func NewFileOrganizer(sourceDir string) (*FileOrganizer, error) {
